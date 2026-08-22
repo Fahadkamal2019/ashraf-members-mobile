@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Allows plain HTTP to the local dev API (10.0.2.2 is the Android emulator's alias for the
+     host machine's localhost). Development only - the production Api must be served over HTTPS,
+     at which point this cleartext allowance should be removed along with android:usesCleartextTraffic
+     in AndroidManifest.xml. -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>
