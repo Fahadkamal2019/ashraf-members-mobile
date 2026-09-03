@@ -1,4 +1,24 @@
 workflows:
+  android-release:
+    name: Android Release (Play Store)
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      groups:
+        - firebase_android
+      android_signing:
+        - ashraf_android_keystore
+      flutter: stable
+    scripts:
+      - name: Get Flutter packages
+        script: flutter packages pub get
+      - name: Write google-services.json from secure variable
+        script: echo $GOOGLE_SERVICES_JSON_BASE64 | base64 --decode > android/app/google-services.json
+      - name: Build appbundle
+        script: flutter build appbundle --release
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
   ios-release:
     name: iOS Release (App Store)
     max_build_duration: 60
