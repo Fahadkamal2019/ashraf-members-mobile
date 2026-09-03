@@ -13,6 +13,14 @@ workflows:
         script: flutter packages pub get
       - name: Write google-services.json from secure variable
         script: echo $GOOGLE_SERVICES_JSON_BASE64 | base64 --decode > android/app/google-services.json
+      - name: Write key.properties from Codemagic keystore reference
+        script: |
+          cat > android/key.properties <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
       - name: Build appbundle
         script: flutter build appbundle --release
     artifacts:
