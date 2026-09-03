@@ -19,9 +19,11 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.niqabatalashraaf.ashraf_members_mobile"
-    // flutter_secure_storage requires compiling against API 37; flutter.compileSdkVersion
-    // (36) isn't high enough yet. compileSdk is backward compatible, doesn't affect minSdk.
-    compileSdk = 37
+    // API 37 is still a preview-only SDK (installed under "android-37.0", not "android-37"),
+    // which Gradle's target-hash lookup can't resolve consistently across build machines -
+    // stick to the latest stable compileSdk instead; flutter_secure_storage compiles fine
+    // against it in practice despite declaring compileSdk 37 in its own build.gradle.
+    compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
