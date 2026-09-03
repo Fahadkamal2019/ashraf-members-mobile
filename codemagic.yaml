@@ -22,7 +22,8 @@ workflows:
           fi
           echo "Using sdkmanager at: $SDKMANAGER"
           yes | "$SDKMANAGER" --licenses || true
-          "$SDKMANAGER" "platforms;android-37"
+          "$SDKMANAGER" --channel=3 "platforms;android-37" || "$SDKMANAGER" "platforms;android-37"
+          "$SDKMANAGER" --list_installed
       - name: Build appbundle
         script: flutter build appbundle --release
     artifacts:
