@@ -15,8 +15,10 @@ workflows:
         script: echo $GOOGLE_SERVICES_JSON_BASE64 | base64 --decode > android/app/google-services.json
       - name: Install Android SDK Platform 37
         script: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-37"
+          SDKMANAGER=$(find "$ANDROID_HOME" "$ANDROID_SDK_ROOT" -name sdkmanager -type f 2>/dev/null | head -1)
+          echo "Using sdkmanager at: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" "platforms;android-37"
       - name: Build appbundle
         script: flutter build appbundle --release
     artifacts:
