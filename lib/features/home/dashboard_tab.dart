@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/app_theme.dart';
 import 'profile_service.dart';
@@ -44,7 +45,13 @@ class DashboardTab extends ConsumerWidget {
                     _InfoRow(label: 'رقم العضو', value: profile.id.toString()),
                     _InfoRow(label: 'رقم العضوية', value: profile.referenceNumber ?? '-'),
                     _InfoRow(
-                      label: 'آخر سنة تجديد',
+                      label: 'بداية العضوية',
+                      value: profile.membershipStartDate != null
+                          ? DateFormat('yyyy/MM/dd').format(profile.membershipStartDate!)
+                          : 'لا يوجد',
+                    ),
+                    _InfoRow(
+                      label: 'مجدد الى',
                       value: profile.lastRenewedYear?.toString() ?? 'لا يوجد',
                     ),
                     if (profile.unreadNotifications > 0)
