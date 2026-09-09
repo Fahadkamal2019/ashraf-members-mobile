@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/app_theme.dart';
@@ -58,6 +59,24 @@ class DashboardTab extends ConsumerWidget {
                       _InfoRow(label: 'إشعارات غير مقروءة', value: profile.unreadNotifications.toString()),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.autorenew, color: AppColors.green),
+                title: const Text('تجديد الاشتراك'),
+                trailing: const Icon(Icons.chevron_left),
+                onTap: () => context.push('/pay-dues'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.shopping_bag_outlined, color: AppColors.green),
+                title: const Text('الخدمات'),
+                trailing: const Icon(Icons.chevron_left),
+                onTap: () => context.push('/services'),
               ),
             ),
           ],

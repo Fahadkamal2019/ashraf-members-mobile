@@ -6,8 +6,12 @@ import 'core/providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/set_password_screen.dart';
 import 'features/auth/verify_screen.dart';
+import 'features/dues/dues_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/news/news_detail_screen.dart';
+import 'features/services/service_purchase_screen.dart';
+import 'features/services/services_list_screen.dart';
+import 'models/service_catalog_item.dart';
 
 const _publicRoutes = ['/login', '/verify', '/set-password'];
 
@@ -49,6 +53,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/news/:id',
         builder: (context, state) => NewsDetailScreen(newsId: int.parse(state.pathParameters['id']!)),
+      ),
+      GoRoute(path: '/pay-dues', builder: (context, state) => const DuesScreen()),
+      GoRoute(path: '/services', builder: (context, state) => const ServicesListScreen()),
+      GoRoute(
+        path: '/services/:paymentTypeId',
+        builder: (context, state) => ServicePurchaseScreen(item: state.extra as ServiceCatalogItem),
       ),
     ],
   );
