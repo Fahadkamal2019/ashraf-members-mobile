@@ -18,6 +18,7 @@ class ServicePurchaseScreen extends ConsumerStatefulWidget {
 
 class _ServicePurchaseScreenState extends ConsumerState<ServicePurchaseScreen> with WidgetsBindingObserver {
   String _deliveryMethod = 'pickup';
+  String _paymentMethod = 'card';
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
   bool _isPaying = false;
@@ -75,6 +76,7 @@ class _ServicePurchaseScreenState extends ConsumerState<ServicePurchaseScreen> w
             deliveryMethod: _deliveryMethod,
             deliveryAddress: _deliveryMethod == 'mail' ? _addressController.text.trim() : null,
             notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+            paymentMethod: _paymentMethod,
           );
       _pendingTransactionId = checkout.transactionId;
       final uri = Uri.parse(checkout.checkoutUrl);
@@ -139,7 +141,21 @@ class _ServicePurchaseScreenState extends ConsumerState<ServicePurchaseScreen> w
             minLines: 1,
             maxLines: 3,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          const Text('طريقة الدفع', style: TextStyle(fontWeight: FontWeight.bold)),
+          RadioListTile<String>(
+            title: const Text('بطاقة ائتمان / خصم'),
+            value: 'card',
+            groupValue: _paymentMethod,
+            onChanged: (v) => setState(() => _paymentMethod = v!),
+          ),
+          RadioListTile<String>(
+            title: const Text('رقم مرجعي فوري (ادفع لاحقاً في أي منفذ)'),
+            value: 'fawry_refno',
+            groupValue: _paymentMethod,
+            onChanged: (v) => setState(() => _paymentMethod = v!),
+          ),
+          const SizedBox(height: 8),
           ElevatedButton(
             onPressed: _isPaying ? null : _pay,
             child: _isPaying

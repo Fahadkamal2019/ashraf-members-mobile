@@ -27,6 +27,7 @@ class ServicesService {
     required String deliveryMethod,
     String? deliveryAddress,
     String? notes,
+    required String paymentMethod,
   }) async {
     try {
       final response = await _dio.post('/api/services/checkout', data: {
@@ -34,6 +35,7 @@ class ServicesService {
         'deliveryMethod': deliveryMethod,
         'deliveryAddress': deliveryAddress,
         'notes': notes,
+        'paymentMethod': paymentMethod,
       });
       return CheckoutResult.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {

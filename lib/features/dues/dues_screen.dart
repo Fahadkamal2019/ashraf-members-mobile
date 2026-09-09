@@ -16,6 +16,7 @@ class DuesScreen extends ConsumerStatefulWidget {
 
 class _DuesScreenState extends ConsumerState<DuesScreen> with WidgetsBindingObserver {
   int _years = 1;
+  String _paymentMethod = 'card';
   bool _isPaying = false;
   int? _pendingTransactionId;
 
@@ -62,7 +63,7 @@ class _DuesScreenState extends ConsumerState<DuesScreen> with WidgetsBindingObse
   Future<void> _pay(DuesSummary summary) async {
     setState(() => _isPaying = true);
     try {
-      final checkout = await ref.read(duesServiceProvider).createCheckout(_years);
+      final checkout = await ref.read(duesServiceProvider).createCheckout(_years, _paymentMethod);
       _pendingTransactionId = checkout.transactionId;
       final uri = Uri.parse(checkout.checkoutUrl);
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -136,7 +137,21 @@ class _DuesScreenState extends ConsumerState<DuesScreen> with WidgetsBindingObse
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+              const Text('طريقة الدفع', style: TextStyle(fontWeight: FontWeight.bold)),
+              RadioListTile<String>(
+                title: const Text('بطاقة ائتمان / خصم'),
+                value: 'card',
+                groupValue: _paymentMethod,
+                onChanged: (v) => setState(() => _paymentMethod = v!),
+              ),
+              RadioListTile<String>(
+                title: const Text('رقم مرجعي فوري (ادفع لاحقاً في أي منفذ)'),
+                value: 'fawry_refno',
+                groupValue: _paymentMethod,
+                onChanged: (v) => setState(() => _paymentMethod = v!),
+              ),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _isPaying ? null : () => _pay(summary),
                 child: _isPaying

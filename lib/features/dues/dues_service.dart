@@ -20,9 +20,12 @@ class DuesService {
     }
   }
 
-  Future<CheckoutResult> createCheckout(int yearsToRenew) async {
+  Future<CheckoutResult> createCheckout(int yearsToRenew, String paymentMethod) async {
     try {
-      final response = await _dio.post('/api/dues/checkout', data: {'yearsToRenew': yearsToRenew});
+      final response = await _dio.post('/api/dues/checkout', data: {
+        'yearsToRenew': yearsToRenew,
+        'paymentMethod': paymentMethod,
+      });
       return CheckoutResult.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
