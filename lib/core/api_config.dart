@@ -4,10 +4,11 @@ import 'package:flutter/foundation.dart'
 /// The real, deployed Api - what every non-debug build (this app's actual Play Store release)
 /// talks to. The Api is deployed as an IIS sub-application mounted at "/m-api" under the member
 /// portal's own site (m.niqabatalashraaf.com) - see AshrafBack.Members.Api.csproj's hosting-model
-/// comment and scripts/deploy-api.ps1's RemotePath. Previously this pointed at
-/// "https://m.niqabatalashraaf.com/api" (missing the "/m-api" mount point), which meant every
-/// real request from the shipped app 404'd - fixed here to match the actual IIS layout.
-const _productionApiBaseUrl = 'https://m.niqabatalashraaf.com/m-api/api';
+/// comment and scripts/deploy-api.ps1's RemotePath. NO trailing "/api" here - every service call
+/// (AuthService, DuesService, etc.) already prefixes its own path with "/api/..."; a previous fix
+/// added "/api" here too, which combined with those calls into a doubled "/m-api/api/api/..."
+/// (404) - confirmed live on 2026-09-14 by testing the exact doubled URL. Do not add "/api" back.
+const _productionApiBaseUrl = 'https://m.niqabatalashraaf.com/m-api';
 
 /// The Api project's base URL. Real builds (anything not run via plain `flutter run` in debug
 /// mode - that includes `--release` and `--profile`, and definitely the Play Store build) always
