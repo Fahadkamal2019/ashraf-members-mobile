@@ -14,9 +14,15 @@ class ApiException implements Exception {
     }
     if (error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout) {
-      return ApiException('تعذر الاتصال بالخادم، يرجى التحقق من الإنترنت والمحاولة مرة أخرى');
+      return ApiException('تعذر الاتصال بالخادم، يرجى التحقق من الإنترنت والمحاولة مرة أخرى'
+          ' [${error.type.name}: ${error.message}]');
     }
-    return ApiException('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى');
+    // TEMPORARY diagnostic detail appended below (remove once the iOS login investigation is
+    // done) - the plain Arabic fallback alone gives no way to tell a 404/500 apart from a TLS
+    // failure or a timeout when reported secondhand.
+    final status = error.response?.statusCode;
+    return ApiException('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى'
+        ' [${error.type.name}${status != null ? ' $status' : ''}: ${error.message ?? error.error}]');
   }
 
   @override
