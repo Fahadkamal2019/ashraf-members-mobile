@@ -86,6 +86,16 @@ class _DuesScreenState extends ConsumerState<DuesScreen> with WidgetsBindingObse
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('$error')),
         data: (summary) {
+          if (!summary.available) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(summary.blockedMessage ?? '', textAlign: TextAlign.center),
+              ),
+            );
+          }
+          final maxYears = summary.maxYearsToRenew.clamp(1, 40);
+          if (_years > maxYears) _years = maxYears;
           final total = (summary.perYearFee * _years) + summary.renewalCardFee + summary.electronicServicesFee;
           return ListView(
             padding: const EdgeInsets.all(20),
@@ -114,7 +124,7 @@ class _DuesScreenState extends ConsumerState<DuesScreen> with WidgetsBindingObse
                   ),
                   Text('$_years', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   IconButton(
-                    onPressed: _years < 40 ? () => setState(() => _years++) : null,
+                    onPressed: _years < maxYears ? () => setState(() => _years++) : null,
                     icon: const Icon(Icons.add_circle_outline),
                   ),
                 ],

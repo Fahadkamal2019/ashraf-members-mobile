@@ -11,12 +11,10 @@ class ServicesService {
 
   final Dio _dio;
 
-  Future<List<ServiceCatalogItem>> getCatalog() async {
+  Future<ServiceCatalog> getCatalog() async {
     try {
       final response = await _dio.get('/api/services/catalog');
-      return (response.data as List)
-          .map((e) => ServiceCatalogItem.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return ServiceCatalog.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -55,6 +53,6 @@ class ServicesService {
 
 final servicesServiceProvider = Provider<ServicesService>((ref) => ServicesService(ref.watch(dioProvider)));
 
-final servicesCatalogProvider = FutureProvider.autoDispose<List<ServiceCatalogItem>>((ref) {
+final servicesCatalogProvider = FutureProvider.autoDispose<ServiceCatalog>((ref) {
   return ref.watch(servicesServiceProvider).getCatalog();
 });

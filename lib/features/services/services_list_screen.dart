@@ -16,7 +16,16 @@ class ServicesListScreen extends ConsumerWidget {
       body: catalogAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('$error')),
-        data: (items) {
+        data: (catalog) {
+          if (!catalog.available) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(catalog.blockedMessage ?? '', textAlign: TextAlign.center),
+              ),
+            );
+          }
+          final items = catalog.items;
           if (items.isEmpty) {
             return const Center(child: Text('لا توجد خدمات متاحة حالياً'));
           }
