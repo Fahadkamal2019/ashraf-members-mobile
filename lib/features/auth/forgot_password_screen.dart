@@ -3,20 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/api_exception.dart';
-import '../../core/providers.dart';
 import 'auth_service.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _memberIdController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nationalIdController = TextEditingController();
+  final _mobileController = TextEditingController();
 
   bool _isLoading = false;
   String? _error;
@@ -24,7 +24,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void dispose() {
     _memberIdController.dispose();
-    _passwordController.dispose();
+    _nationalIdController.dispose();
+    _mobileController.dispose();
     super.dispose();
   }
 
@@ -37,13 +38,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
     try {
-      final result = await ref.read(authServiceProvider).login(
+      final token = await ref.read(authServiceProvider).forgotPassword(
             memberId: int.parse(_memberIdController.text.trim()),
-            password: _passwordController.text,
+            nationalId: _nationalIdController.text.trim(),
+            mobile: _mobileController.text.trim(),
           );
-      await ref.read(authTokenProvider.notifier).setToken(result.accessToken);
       if (!mounted) return;
-      context.go('/home');
+      context.go('/set-password', extra: token);
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -54,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('بوابة الأعضاء')),
+      appBar: AppBar(title: const Text('نسيت كلمة المرور')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -64,44 +65,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Image.asset('assets/images/logo.png', height: 96),
+                const SizedBox(height: 16),
+                const Text(
+                  'أدخل بياناتك للتحقق من هويتك وإعادة تعيين كلمة المرور',
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 24),
                 if (_error != null) ...[
                   Text(_error!, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
                   const SizedBox(height: 12),
                 ],
                 TextFormField(
-                  key: const Key('login_member_id_field'),
                   controller: _memberIdController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: 'رقم العضو'),
                   validator: (value) =>
-                      (value == null || int.tryParse(value.trim()) == null) ? 'أدخل رقم العضو' : null,
+                      (value == null || int.tryParse(value.trim()) == null) ? 'رقم العضو يجب أن يكون رقماً' : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  key: const Key('login_password_field'),
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'كلمة المرور'),
-                  validator: (value) => (value == null || value.isEmpty) ? 'أدخل كلمة المرور' : null,
+                  controller: _nationalIdController,
+                  decoration: const InputDecoration(labelText: 'الرقم القومي'),
+                  validator: (value) => (value == null || value.trim().isEmpty) ? 'مطلوب' : null,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _mobileController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(labelText: 'رقم الموبايل'),
+                  validator: (value) => (value == null || value.trim().isEmpty) ? 'مطلوب' : null,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  key: const Key('login_submit_button'),
                   onPressed: _isLoading ? null : _submit,
                   child: _isLoading
                       ? const SizedBox(
                           height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Text('تسجيل الدخول'),
+                      : const Text('تحقق من الهوية وإعادة تعيين كلمة المرور'),
                 ),
                 const SizedBox(height: 12),
                 TextButton(
-                  onPressed: () => context.go('/verify'),
-                  child: const Text('أول مرة تدخل البوابة؟ تحقق من هويتك'),
-                ),
-                TextButton(
-                  onPressed: () => context.go('/forgot-password'),
-                  child: const Text('نسيت كلمة المرور؟'),
+                  onPressed: () => context.go('/login'),
+                  child: const Text('تذكرت كلمة المرور؟ سجل الدخول'),
                 ),
               ],
             ),

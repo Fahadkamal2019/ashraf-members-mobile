@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/providers.dart';
+import 'features/auth/forgot_password_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/set_password_screen.dart';
 import 'features/auth/verify_screen.dart';
@@ -13,7 +14,7 @@ import 'features/services/service_purchase_screen.dart';
 import 'features/services/services_list_screen.dart';
 import 'models/service_catalog_item.dart';
 
-const _publicRoutes = ['/login', '/verify', '/set-password'];
+const _publicRoutes = ['/login', '/verify', '/forgot-password', '/set-password'];
 
 /// Bridges authTokenProvider's changes into a Listenable go_router can watch, so a login/logout
 /// re-runs the redirect guard below without rebuilding the whole router (which would lose
@@ -45,6 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/verify', builder: (context, state) => const VerifyScreen()),
+      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
       GoRoute(
         path: '/set-password',
         builder: (context, state) => SetPasswordScreen(token: state.extra as String? ?? ''),

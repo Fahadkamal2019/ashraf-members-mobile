@@ -33,6 +33,19 @@ class AuthService {
     }
   }
 
+  Future<String> forgotPassword({required int memberId, required String nationalId, required String mobile}) async {
+    try {
+      final response = await _dio.post('/api/auth/forgot-password', data: {
+        'memberId': memberId,
+        'nationalId': nationalId,
+        'mobile': mobile,
+      });
+      return response.data['setPasswordToken'] as String;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   Future<void> setPassword({required String token, required String password, required String confirmPassword}) async {
     try {
       await _dio.post('/api/auth/set-password', data: {
