@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/api_exception.dart';
 import '../../core/providers.dart';
 import 'auth_service.dart';
+
+const _policiesUrl = 'https://m.niqabatalashraaf.com/policies';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -102,6 +105,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextButton(
                   onPressed: () => context.go('/forgot-password'),
                   child: const Text('نسيت كلمة المرور؟'),
+                ),
+                TextButton(
+                  onPressed: () => launchUrl(Uri.parse(_policiesUrl), mode: LaunchMode.externalApplication),
+                  child: const Text('الشروط والأحكام وسياسة الخصوصية'),
                 ),
               ],
             ),

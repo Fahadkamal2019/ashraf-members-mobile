@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/app_theme.dart';
 import 'profile_service.dart';
+
+const _policiesUrl = 'https://m.niqabatalashraaf.com/policies';
 
 class DashboardTab extends ConsumerWidget {
   const DashboardTab({super.key});
@@ -77,6 +80,15 @@ class DashboardTab extends ConsumerWidget {
                 title: const Text('الخدمات'),
                 trailing: const Icon(Icons.chevron_left),
                 onTap: () => context.push('/services'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.description_outlined, color: AppColors.green),
+                title: const Text('الشروط والأحكام وسياسة الخصوصية'),
+                trailing: const Icon(Icons.chevron_left),
+                onTap: () => launchUrl(Uri.parse(_policiesUrl), mode: LaunchMode.externalApplication),
               ),
             ),
           ],
