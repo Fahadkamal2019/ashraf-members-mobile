@@ -32,14 +32,27 @@ class FcmService {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Without DarwinInitializationSettings, this plugin never initializes on iOS at all, so the
+    // manual .show() call below (needed for foreground messages, same as the Android path) would
+    // silently do nothing there even once push delivery itself works.
+    const iosInit = DarwinInitializationSettings();
     await _localNotificationsPlugin.initialize(
-      settings: const InitializationSettings(android: androidInit),
+      settings: const InitializationSettings(android: androidInit, iOS: iosInit),
     );
     await _localNotificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
 
     await FirebaseMessaging.instance.requestPermission();
+
+    // iOS shows a foreground push natively only if told to; this app instead displays it itself
+    // via flutter_local_notifications below (matching the Android path), so native presentation
+    // must be turned off here or the member could see the alert rendered twice.
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: false,
+      sound: false,
+    );
 
     // FCM only auto-shows a system notification while the app is backgrounded/closed; a
     // foreground message has to be displayed manually or the member would never see it.
@@ -57,6 +70,11 @@ class FcmService {
             channelDescription: _androidChannel.description,
             importance: Importance.high,
             priority: Priority.high,
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
           ),
         ),
       );
